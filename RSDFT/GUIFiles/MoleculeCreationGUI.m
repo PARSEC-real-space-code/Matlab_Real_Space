@@ -71,7 +71,7 @@ settingsWindowOpen=0;
 guidata(hObject, handles);% needed to save AtomsInMolecule changes
 
 % allow visualization to be rotated
-rotate3d(handles.VisualizationOfMolecule);
+rotate3d(handles.VisualizationOfMolecule, "on");
 
 % set GUI objects to state that reflect the values that are in the varibles
 % set in the script settings.m

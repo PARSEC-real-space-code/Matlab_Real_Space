@@ -11,7 +11,7 @@ for tempIndex=1:numel(Atoms)
 end
 
 elem    = importdata('elements_new.csv');
-N_elements=size(elem.data);
+N_elements=size(elem.data, 1);
 %%%%
 %%%%
 % This is the number of species that need to be looked at

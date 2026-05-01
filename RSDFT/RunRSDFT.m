@@ -83,7 +83,7 @@ global fd_order maxits tol Fermi_temp
 %%%%%%%%%
 % Information about each element
 elem    = importdata('elements_new.csv');
-N_elements=size(elem.data);
+N_elements=size(elem.data, 1);
 %%%%
 %%%%
 % This is the number of species that need to be looked at
@@ -525,7 +525,7 @@ fprintf(fid,'  %10.5f  Ry  \n',E_total0) ;
 fprintf(fid,' Electronic energy/atom  = %10.5f  eV   = ',E_total/n_atoms) ;
 fprintf(fid,'  %10.5f  Ry  \n\n',E_total0/n_atoms) ;
 
-if (err <= tol),
+if (err <= tol)
     fprintf(fid,' Self consistency reached within %i steps, diagmeth=%i\n', its, diagmeth) ;
 else
     fprintf(fid,' Failed to reach self-consistency within %i steps\n', its) ; 
