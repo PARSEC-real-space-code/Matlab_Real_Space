@@ -100,6 +100,9 @@ for at_typ=1:N_types
     [z_chg,c_chg,d_chg]=fspline(x_charg, y_charg);
     [z_p_s,c_p_s,d_p_s]=fspline(x_pot_s, y_pot_s);
     [z_vht,c_vht,d_vht]=fspline(x_vhart, y_vhart);
+    pp_chg = fsplinepp(z_chg,c_chg,d_chg,x_charg);
+    pp_p_s = fsplinepp(z_p_s,c_p_s,d_p_s,x_pot_s);
+    pp_vht = fsplinepp(z_vht,c_vht,d_vht,x_vhart);
     
 %-- Scan all points for each atom (not optimal but OK)--copied from
 %-- ppot.m with a small change of formula to find potential
@@ -130,24 +133,15 @@ for at_typ=1:N_types
                 
 
                 if (OPTIMIZATIONLEVEL~=0)
-                	% a c version of the inner most for loop
+                    % a c version of the inner most for loop
                     [ppot,rrho,hpot00]=PsuedoDiagLoops(z_p_s,c_p_s,d_p_s,z_chg,c_chg,d_chg,z_vht,c_vht,d_vht,x_pot_s,x_charg,x_vhart,r1,j_p_s,j_ch,j_vht,nx);
                 else
-                	for i=1:2:nx
-%%----------------- Evaluating the splines
-                    	% loop has been unrolled once, can be done because nx
-                    	% is always even
-                    	iPlusOne=i+1;
-                    	[ppot(i,1) j_p_s]   = fsplevalIO(z_p_s,c_p_s,d_p_s,x_pot_s,r1(i),j_p_s);
-                    	[rrho(i,1) j_ch]    = fsplevalIO(z_chg,c_chg,d_chg,x_charg,r1(i),j_ch);
-                    	[hpot00(i,1) j_vht] = fsplevalIO(z_vht,c_vht,d_vht,x_vhart,r1(i),j_vht);
-                    
-                    	[ppot(iPlusOne,1) j_p_s]   = fsplevalIO(z_p_s,c_p_s,d_p_s,x_pot_s,r1(iPlusOne),j_p_s);
-                    	[rrho(iPlusOne,1) j_ch]    = fsplevalIO(z_chg,c_chg,d_chg,x_charg,r1(iPlusOne),j_ch);
-                    	[hpot00(iPlusOne,1) j_vht] = fsplevalIO(z_vht,c_vht,d_vht,x_vhart,r1(iPlusOne),j_vht);                  
-%%----------------- done atom-specific calculations - now compute
-%%----------------- potentials, charge.    
-                	end  %% end x
+                    ppot = fsppval(pp_p_s,r1);
+                    rrho = fsppval(pp_chg,r1);
+                    hpot00 = fsppval(pp_vht,r1);
+                    ppot = ppot(:);
+                    rrho = rrho(:);
+                    hpot00 = hpot00(:);
                 end
                 
                 if (enableMexFilesTest==1)
@@ -176,4 +170,3 @@ end                  %% end atom_typ
 %%---- Check charge
 Rsum0=sum(rho0);
 rho0=Z_sum*rho0/Rsum0;
-
