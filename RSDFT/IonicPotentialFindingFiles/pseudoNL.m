@@ -107,6 +107,8 @@ for at_typ=1:N_types
 
   [zWav, cWav, dWav] = fspline(xi_wfn_P,wfn_P);
   [zPotPS, cPotPS, dPotPS] = fspline(xi_potPS,potPS);
+  ppWav = fsplinepp(zWav,cWav,dWav,xi_wfn_P);
+  ppPotPS = fsplinepp(zPotPS,cPotPS,dPotPS,xi_potPS);
 %%--------------------  End generating the coefficients for splines
 
   for i = 1:length(elem.data)
@@ -153,12 +155,17 @@ for at_typ=1:N_types
     span=round(Rzero/h);   %%%-
 
     indx=0;
+    max_points = (2*span + 1)^3;
+    nn = zeros(1,max_points);
+    xx = zeros(1,max_points);
+    yy = zeros(1,max_points);
+    zz = zeros(1,max_points);
+    dd = zeros(1,max_points);
 
     for k=k0-span:k0+span
       zzz = (k-1)*h - rad - zza;
       for j=j0-span:j0+span
         yyy = (j-1)*h - rad - yya;
-        j_p_ps = 1; j_wfn = 1;
         for i=i0-span:i0+span
           xxx = (i-1)*h - rad - xxa;
 %-------------------- calculate distance from (xxx,yyy,zzz) to atom
@@ -175,12 +182,18 @@ for at_typ=1:N_types
             yy(indx)=yyy;
             zz(indx)=zzz;
             dd(indx)=dd1;
-            [ vspp(indx)  j_p_ps ] = fsplevalIO(zPotPS,cPotPS,dPotPS,xi_potPS,dd1, j_p_ps);
-            [ wavpp(indx) j_wfn  ] = fsplevalIO(zWav,cWav,dWav,xi_wfn_P,dd1, j_wfn);
           end % end of core size if statement
         end % end of for loop concerning xxx
       end % end of for loop concerning yyy
     end % end of for loop concerning zzz
+    active_points = 1:indx;
+    nn = nn(active_points);
+    xx = xx(active_points);
+    yy = yy(active_points);
+    zz = zz(active_points);
+    dd = dd(active_points);
+    vspp = fsppval(ppPotPS,dd);
+    wavpp = fsppval(ppWav,dd);
 %
     %%%%%%% DEBUGGING INFORMATION %%%%%%%
 %   disp('Z xint')
