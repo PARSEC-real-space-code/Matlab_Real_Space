@@ -197,12 +197,7 @@ else
     if (OPTIMIZATIONLEVEL~=0)
         G=Rayleighritz(Vin,W,mev);
     else
-        for j=1:mev
-            for i=1:j
-                G(i,j) = Vin(:,i)'*W(:,j);
-                G(j,i) = G(i,j);
-            end
-        end
+        G = rayleighRitzProduct(Vin,W);
         if (enableMexFilesTest==1)
             G2=Rayleighritz(Vin,W,mev);
             if (any(abs(G-G2)>0.000001))

@@ -47,14 +47,7 @@ for it = 1:Max_out_iter
     if (OPTIMIZATIONLEVEL~=0)
         G=Rayleighritz(Vin,W,n2);
     else
-        %preallocating G
-        G=zeros(n2,n2);
-        for j=1:n2
-            for i=1:j
-                G(i,j) = Vin(:,i)'*W(:,j);
-                G(j,i) = G(i,j);
-            end
-        end
+        G = rayleighRitzProduct(Vin,W);
         if (enableMexFilesTest==1)
             G2=Rayleighritz(Vin,W,n2);
             if (any(abs(G-G2)>0.000001))

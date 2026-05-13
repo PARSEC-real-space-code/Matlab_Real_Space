@@ -52,14 +52,7 @@ for it = 1 : max_iter
     if (OPTIMIZATIONLEVEL~=0)
         G=Rayleighritz(Vin,W,n2);
     else
-        % reuse G and overwrite it
-        G=zeros(n2,n2);
-        for j=1:n2
-            for i=1:j
-                G(i,j) = Vin(:,i)'*W(:,j);
-                G(j,i) = G(i,j);
-            end
-        end
+        G = rayleighRitzProduct(Vin,W);
     end
 
     [Q, D] = eig(G);
